@@ -30,7 +30,7 @@ export class RegisterUserDto {
   @IsNotEmpty()
   @IsString()
   @MaxLength(32)
-  fisrtname: string;
+  firstname: string;
 
   @ApiProperty()
   @IsNotEmpty()

@@ -20,7 +20,7 @@ export class AuthController {
       type: 'object',
       properties: {
         lastname: { type: 'string' },
-        fisrtname: { type: 'string' },
+        firstname: { type: 'string' },
         email: { type: 'string' },
         password: { type: 'string' },
         confirmationPassword: { type: 'string' },
