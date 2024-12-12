@@ -6,45 +6,58 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
-
 enum UserRole {
   HAB
   EMPLOYEE
+  BAI_ADMIN
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  email     String   @unique
-  hash      String
-  firstName String
-  lastName  String
-  role      UserRole @default(EMPLOYEE)
-  // Bookmark  Bookmark[]
+  user_id        Int       @id @default(autoincrement())
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+  email          String    @unique
+  phoneNumber   String?   
+  lastName       String 
+  firstName      String
+  password       String
+  profilePhoto  String?   
+  role           UserRole  @default(EMPLOYEE)
+
+  HSE_instructions       HSE_instruction[] @relation("UserHSEInstructions")
+  HSE_compliance_history HSE_compliance_history[] @relation("UserHSEComplianceHistory")
 
   @@map("users")
 }
 
-model Info {
-  id        Int      @id @default(autoincrement())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  title     String
-  type      String
+model HSE_instruction {
+  HSE_instruction_id Int      @id @default(autoincrement())
+  title              String
+  type               String
+  description        String
+  photo_url          String?
+  audio_url          String?   
+  employee           User     @relation("UserHSEInstructions", fields: [employee_id], references: [user_id])
+  employee_id        Int
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  HSE_compliance_history HSE_compliance_history[] @relation("InstructionComplianceHistory")
+  
+  @@map("hse_instructions")
 }
 
-// model Bookmark {
-//   id        Int      @id @default(autoincrement())
-//   createdAt DateTime @default(now())
-//   updatedAt DateTime @updatedAt
+model HSE_compliance_history {
+  compliance_id     Int      @id @default(autoincrement())
+  employee          User     @relation("UserHSEComplianceHistory", fields: [employee_id], references: [user_id])
+  employee_id       Int
+  safety_gear_status String?  
+  location          String
+  signature         String   
+  HSE_instruction   HSE_instruction @relation("InstructionComplianceHistory", fields: [HSE_instruction_id], references: [HSE_instruction_id])
+  HSE_instruction_id Int
+  createdAt          DateTime @default(now())
 
-//   title        String
-//   descripstion String?
-//   link         String
+  @@map("hse_compliance_history")
+}
 
-//   userId Int
-//   user   User @relation(fields: [userId], references: [id])
-
-//   @@map("bookmark")
-// }

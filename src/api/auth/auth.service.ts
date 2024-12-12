@@ -6,7 +6,7 @@ import * as bcrypt from 'bcrypt';
 import { PrismaService } from 'src/api/prisma/prisma.service';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 import { RegisterUserDto } from './dto/register-user.dto';
-import { UserRole } from '@prisma/client';
+import { Prisma, UserRole } from '@prisma/client';
 
 
 @Injectable()
@@ -24,15 +24,15 @@ export class AuthService {
       const user = await this.prisma.user.create({
         data: {
           email: registerUserDto.email,
-          firstName: registerUserDto.firstname,
-          lastName: registerUserDto.lastname,
+          firstName: registerUserDto.firstName,
+          lastName: registerUserDto.lastName,
           role: registerUserDto.role || undefined,
-          hash,
+          password: hash, 
         },
       });
       return {
         message: 'success',
-        userId: user.id,
+        userId: user.user_id,
         email: user.email,
         firstname: user.firstName,
         lastname: user.lastName,
@@ -51,15 +51,15 @@ export class AuthService {
 
   async login(createAuthDto: CreateAuthDto) {
     const user = await this.prisma.user.findUnique({ where: { email: createAuthDto.email } });
-    if (user && (await bcrypt.compare(createAuthDto.password, user.hash))) {
-      const payload = { email: user.email, userId: user.id, username: user.firstName };
+    if (user && (await bcrypt.compare(createAuthDto.password, user.password))) {
+      const payload = { email: user.email, userId: user.user_id, username: user.firstName };
       return {
         message: "success",
         accessToken: this.jwtService.sign(payload),
         refreshToken: this.jwtService.sign(payload, { expiresIn: '1d' }),
         email: user.email,
         role: user.role,
-        userId: user.id,
+        userId: user.user_id,
         username: user.firstName,
       };
     }
@@ -84,7 +84,7 @@ export class AuthService {
   // }
 
   async roleCheck(userId: number) {
-    const users = await this.prisma.user.findUnique({ where: { id: userId } });
+    const users = await this.prisma.user.findUnique({ where: { user_id: userId } });
     if (!users) {
       throw new BadRequestException(`${userId}тай хэрэглэгч олдсонгүй`);
     }

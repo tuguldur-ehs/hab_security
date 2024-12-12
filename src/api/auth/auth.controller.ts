@@ -26,8 +26,8 @@ export class AuthController {
         confirmationPassword: { type: 'string' },
         role: {
           type: 'string',
-          enum: ['HAB', 'EMPLOYEE',],
-          example: 'EMPLOYEE || HAB',
+          enum: ['HAB', 'EMPLOYEE', 'BAI_ADMIN'],
+          example: 'EMPLOYEE || HAB || BAI_ADMIN',
         },
       },
     },

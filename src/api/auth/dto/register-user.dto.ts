@@ -24,13 +24,13 @@ export class RegisterUserDto {
   @IsNotEmpty()
   @IsString()
   @MaxLength(32)
-  lastname: string;
+  lastName: string;
 
   @ApiProperty()
   @IsNotEmpty()
   @IsString()
   @MaxLength(32)
-  firstname: string;
+  firstName: string;
 
   @ApiProperty()
   @IsNotEmpty()
